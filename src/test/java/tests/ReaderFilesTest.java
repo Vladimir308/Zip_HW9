@@ -3,7 +3,6 @@ package tests;
 import com.codeborne.pdftest.PDF;
 import com.codeborne.xlstest.XLS;
 import com.opencsv.CSVReader;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStreamReader;
@@ -11,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class ReaderFilesTest {
 
@@ -32,8 +33,9 @@ public class ReaderFilesTest {
                 }
                 PDF pdf = new PDF(zipInputStream);
                 zipInputStream.closeEntry();
-                Assertions.assertEquals(nameFile, expected);
-                Assertions.assertEquals("Милюков Владимир", pdf.author);
+                assertThat(nameFile).isEqualTo("expected", "Милюков Владимир", pdf.author);
+                //Assertions.assertEquals(nameFile, expected);
+                //Assertions.assertEquals("Милюков Владимир", pdf.author);
             }
         }
 
@@ -54,8 +56,9 @@ public class ReaderFilesTest {
                 XLS xls = new XLS(zipInputStream);
                 String cellValue = xls.excel.getSheetAt(0).getRow(5).getCell(0).getStringCellValue();
                 zipInputStream.closeEntry();
-                Assertions.assertEquals(nameFile, expected);
-                Assertions.assertEquals("Важный тест!", cellValue);
+                assertThat(nameFile).isEqualTo("expected", "Важный тест!", cellValue);
+                //Assertions.assertEquals(nameFile, expected);
+                //Assertions.assertEquals("Важный тест!", cellValue);
             }
         }
     }
@@ -75,14 +78,13 @@ public class ReaderFilesTest {
                 CSVReader reader = new CSVReader(new InputStreamReader(zipInputStream));
                 List<String[]> res = reader.readAll();
                 zipInputStream.closeEntry();
-                Assertions.assertEquals(nameFile, expected);
-                Assertions.assertArrayEquals(new String[]{"Java", "https://habr.com"}, res.get(0));
-                Assertions.assertArrayEquals(new String[]{"Selenide", "https://ru.selenide.org/"}, res.get(1));
+                assertThat(nameFile).isEqualTo("expected",
+                        new String[]{"Java", "https://habr.com"}, res.get(0),
+                        new String[] {"Selenide", "https://ru.selenide.org/"}, res.get(1));
+                //Assertions.assertEquals(nameFile, expected);
+                //Assertions.assertArrayEquals(new String[]{"Java", "https://habr.com"}, res.get(0));
+                //Assertions.assertArrayEquals(new String[]{"Selenide", "https://ru.selenide.org/"}, res.get(1));
             }
         }
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
     }
 }
