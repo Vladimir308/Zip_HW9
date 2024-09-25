@@ -28,14 +28,13 @@ public class ReaderFilesTest {
                 .requireNonNull(classLoader.getResourceAsStream("Tests.zip")))) {
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 String nameFile = zipEntry.getName();
-                if (!nameFile.equals(expected)) {
+                String expected = "Test_2.pdf";
+                if (!nameFile.equals(expected))  {
                     continue;
                 }
                 PDF pdf = new PDF(zipInputStream);
                 zipInputStream.closeEntry();
-                assertThat(nameFile).isEqualTo("expected", "Милюков Владимир", pdf.author);
-                //Assertions.assertEquals(nameFile, expected);
-                //Assertions.assertEquals("Милюков Владимир", pdf.author);
+                assertThat(pdf.text).contains("Никакой полезной информации он не несёт");
             }
         }
 
@@ -49,6 +48,7 @@ public class ReaderFilesTest {
                 .requireNonNull(classLoader.getResourceAsStream("Tests.zip")))) {
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 String nameFile = zipEntry.getName();
+                String expected = "Test_3.xls";
                 if (!nameFile.equals(expected)) {
                     continue;
                 }
@@ -56,9 +56,7 @@ public class ReaderFilesTest {
                 XLS xls = new XLS(zipInputStream);
                 String cellValue = xls.excel.getSheetAt(0).getRow(5).getCell(0).getStringCellValue();
                 zipInputStream.closeEntry();
-                assertThat(nameFile).isEqualTo("expected", "Важный тест!", cellValue);
-                //Assertions.assertEquals(nameFile, expected);
-                //Assertions.assertEquals("Важный тест!", cellValue);
+                assertThat(nameFile).isEqualTo("Test_3.xls", "Важный тест!", cellValue);
             }
         }
     }
@@ -71,6 +69,7 @@ public class ReaderFilesTest {
                 .requireNonNull(classLoader.getResourceAsStream("Tests.zip")))) {
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 String nameFile = zipEntry.getName();
+                String expected = "Test_1.csv";
                 if (!nameFile.equals(expected)) {
                     continue;
                 }
@@ -78,12 +77,9 @@ public class ReaderFilesTest {
                 CSVReader reader = new CSVReader(new InputStreamReader(zipInputStream));
                 List<String[]> res = reader.readAll();
                 zipInputStream.closeEntry();
-                assertThat(nameFile).isEqualTo("expected",
+                assertThat(nameFile).isEqualTo("Test_1.csv",
                         new String[]{"Java", "https://habr.com"}, res.get(0),
                         new String[] {"Selenide", "https://ru.selenide.org/"}, res.get(1));
-                //Assertions.assertEquals(nameFile, expected);
-                //Assertions.assertArrayEquals(new String[]{"Java", "https://habr.com"}, res.get(0));
-                //Assertions.assertArrayEquals(new String[]{"Selenide", "https://ru.selenide.org/"}, res.get(1));
             }
         }
     }
